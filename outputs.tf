@@ -1,0 +1,59 @@
+## VPC Data
+
+output "vpc" {
+  value = data.aws_vpc.batcave_vpc.cidr_block_associations.*.cidr_block
+}
+
+output "vpc_id" {
+  description = "The ID of the VPC"
+  value       = data.aws_vpc.batcave_vpc.id
+}
+
+output "vpc_arn" {
+  description = "The ARN of the VPC"
+  value       = data.aws_vpc.batcave_vpc.arn
+}
+
+
+output "private_subnets" {
+  description = "List of IDs of private subnets"
+  value       = data.aws_subnet_ids.private.ids
+}
+
+output "public_subnets" {
+  description = "List of IDs of public subnets"
+  value       = data.aws_subnet_ids.public.ids
+}
+
+output "container_subnets" {
+  description = "List of IDs of container subnets"
+  value       = data.aws_subnet_ids.container.ids
+}
+
+output "transport_subnets" {
+  description = "List of IDs of transport subnets"
+  value       = try(data.aws_subnet_ids.transport[0].ids, [])
+}
+output "transport_subnet_cidr_blocks" {
+  description = "map of IDs to transport subnet cidrs"
+  value       = { for subnet in data.aws_subnet.transport : subnet.id => subnet.cidr_block }
+}
+
+output "shared_services_sg" {
+  description = "ID of the shared services security group"
+  value       = data.aws_security_group.shared_services_sg.id
+}
+
+output "cmscloud_vpn_sg" {
+  description = "ID of the cmscloud vpn security group"
+  value       = data.aws_security_group.cmscloud_vpn.id
+}
+
+output "cmscloud_vpn_pl" {
+  description = "Prefix list of cmscloud vpn"
+  value = data.aws_ec2_managed_prefix_list.vpn_prefix_list.id
+}
+
+output "cmscloud_shared_services_pl" {
+  value = data.aws_ec2_managed_prefix_list.cmscloud_shared_services_pl.id
+}
