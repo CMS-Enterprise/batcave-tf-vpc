@@ -80,7 +80,7 @@ data "aws_security_group" "shared_services_sg" {
     ]
   }
 }
-batcave_vpc-test
+
 data "aws_security_group" "cmscloud_vpn" {
   vpc_id = data.aws_vpc.vpc.id
   filter {
