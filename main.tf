@@ -1,5 +1,5 @@
 # vpc id
-data "aws_vpc" "vpc" {
+data "aws_vpc" "batcave_vpc" {
   tags = {
     Name = "${var.project}-*-${var.env}"
   }
@@ -7,7 +7,7 @@ data "aws_vpc" "vpc" {
 
 # private subnets
 data "aws_subnet_ids" "private" {
-  vpc_id = data.aws_vpc.vpc.id
+  vpc_id = data.aws_vpc.batcave_vpc.id
   filter {
     name = "tag:Name"
     values = [
@@ -18,7 +18,7 @@ data "aws_subnet_ids" "private" {
 
 # public subnets
 data "aws_subnet_ids" "public" {
-  vpc_id = data.aws_vpc.vpc.id
+  vpc_id = data.aws_vpc.batcave_vpc.id
   filter {
     name = "tag:Name"
     values = [
@@ -29,7 +29,7 @@ data "aws_subnet_ids" "public" {
 
 # container subnets
 data "aws_subnet_ids" "container" {
-  vpc_id = data.aws_vpc.vpc.id
+  vpc_id = data.aws_vpc.batcave_vpc.id
   filter {
     name = "tag:Name"
     values = [
@@ -41,7 +41,7 @@ data "aws_subnet_ids" "container" {
 # transport subnets
 data "aws_subnet_ids" "transport" {
   count  = var.transport_subnets_exist ? 1 : 0
-  vpc_id = data.aws_vpc.vpc.id
+  vpc_id = data.aws_vpc.batcave_vpc.id
   filter {
     name = "tag:Name"
     values = [
@@ -72,7 +72,7 @@ data "aws_subnet" "transport" {
 }
 
 data "aws_security_group" "shared_services_sg" {
-  vpc_id = data.aws_vpc.vpc.id
+  vpc_id = data.aws_vpc.batcave_vpc.id
   filter {
     name = "tag:Name"
     values = [
@@ -82,7 +82,7 @@ data "aws_security_group" "shared_services_sg" {
 }
 
 data "aws_security_group" "cmscloud_vpn" {
-  vpc_id = data.aws_vpc.vpc.id
+  vpc_id = data.aws_vpc.batcave_vpc.id
   filter {
     name = "tag:Name"
     values = [
