@@ -1,7 +1,7 @@
 # vpc id
 data "aws_vpc" "batcave_vpc" {
   tags = {
-    Name = "batcave-*-${var.env}"
+    Name = "${var.project}-*-${var.env}"
   }
 }
 
@@ -10,7 +10,7 @@ data "aws_subnets" "private" {
   filter {
     name   = "tag:Name"
     values = [
-      "batcave-*-${var.env}-private-*"
+      "${var.project}-*-${var.env}-private-*"
     ]
   }
 }
@@ -20,7 +20,7 @@ data "aws_subnets" "public" {
   filter {
     name   = "tag:Name"
     values = [
-      "batcave-*-${var.env}-public-*"
+      "${var.project}-*-${var.env}-public-*"
     ]
   }
 }
@@ -30,7 +30,7 @@ data "aws_subnets" "container" {
   filter {
     name   = "tag:Name"
     values = [
-      "batcave-*-${var.env}-unroutable-*"
+      "${var.project}-*-${var.env}-unroutable-*"
     ]
   }
 }
@@ -40,7 +40,7 @@ data "aws_subnets" "transport" {
   filter {
     name   = "tag:Name"
     values = [
-      "batcave-*-${var.env}-transport-*"
+      "${var.project}-*-${var.env}-transport-*"
     ]
   }
 }
