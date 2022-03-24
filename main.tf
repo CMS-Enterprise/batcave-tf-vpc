@@ -70,6 +70,6 @@ data "aws_ec2_managed_prefix_list" "vpn_prefix_list" {
   name = "cmscloud-vpn"
 }
 
-data "aws_ec2_managed_prefix_list" "cmscloud_shared_services_pl"{
+data "aws_ec2_managed_prefix_list" "cmscloud_shared_services_pl" {
   name = "cmscloud-shared-services"
 }

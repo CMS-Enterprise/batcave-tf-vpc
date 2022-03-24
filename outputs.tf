@@ -35,7 +35,12 @@ output "transport_subnets" {
 
 output "transport_subnet_cidr_blocks" {
   description = "map of IDs to transport subnet cidrs"
-  value       = {for subnet in data.aws_subnet.transport : subnet.id => subnet.cidr_block}
+  value       = { for subnet in data.aws_subnet.transport : subnet.id => subnet.cidr_block }
+}
+
+output "transport_subnets_by_zone" {
+  description = "map of AZs to transport subnet ids"
+  value       = { for subnet in data.aws_subnet.transport : subnet.availability_zone => subnet.id }
 }
 
 output "cmscloud_vpn_pl" {
