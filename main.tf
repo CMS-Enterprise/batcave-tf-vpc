@@ -74,13 +74,6 @@ data "aws_ec2_managed_prefix_list" "cmscloud_shared_services_pl" {
   name = "cmscloud-shared-services"
 }
 
-data "aws_security_group" "cms_security_tools" {
-  # Allow trendmicro to push updates, among other things (probably)
-  vpc_id = data.aws_vpc.batcave_vpc.id
-  filter {
-    name = "tag:Name"
-    values = [
-      "cmscloud-security-tools"
-    ]
-  }
+data "aws_ec2_managed_prefix_list" "cmscloud_security_tools" {
+  name = "cmscloud-security-tools"
 }
