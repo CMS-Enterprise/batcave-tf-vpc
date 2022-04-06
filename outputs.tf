@@ -51,3 +51,7 @@ output "cmscloud_vpn_pl" {
 output "cmscloud_shared_services_pl" {
   value = data.aws_ec2_managed_prefix_list.cmscloud_shared_services_pl.id
 }
+
+output "cmscloud_security_tools_sg" {
+  value = data.aws_security_group.cms_security_tools.id
+}

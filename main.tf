@@ -8,7 +8,7 @@ data "aws_vpc" "batcave_vpc" {
 # private subnets
 data "aws_subnets" "private" {
   filter {
-    name   = "tag:Name"
+    name = "tag:Name"
     values = [
       "${var.project}-*-${var.env}-private-*"
     ]
@@ -18,7 +18,7 @@ data "aws_subnets" "private" {
 # public subnets
 data "aws_subnets" "public" {
   filter {
-    name   = "tag:Name"
+    name = "tag:Name"
     values = [
       "${var.project}-*-${var.env}-public-*"
     ]
@@ -28,7 +28,7 @@ data "aws_subnets" "public" {
 # container subnets
 data "aws_subnets" "container" {
   filter {
-    name   = "tag:Name"
+    name = "tag:Name"
     values = [
       "${var.project}-*-${var.env}-unroutable-*"
     ]
@@ -38,7 +38,7 @@ data "aws_subnets" "container" {
 # transport subnets
 data "aws_subnets" "transport" {
   filter {
-    name   = "tag:Name"
+    name = "tag:Name"
     values = [
       "${var.project}-*-${var.env}-transport-*"
     ]
@@ -72,4 +72,15 @@ data "aws_ec2_managed_prefix_list" "vpn_prefix_list" {
 
 data "aws_ec2_managed_prefix_list" "cmscloud_shared_services_pl" {
   name = "cmscloud-shared-services"
+}
+
+data "aws_security_group" "cms_security_tools" {
+  # Allow trendmicro to push updates, among other things (probably)
+  vpc_id = data.aws_vpc.batcave_vpc.id
+  filter {
+    name = "tag:Name"
+    values = [
+      "cmscloud-security-tools"
+    ]
+  }
 }
