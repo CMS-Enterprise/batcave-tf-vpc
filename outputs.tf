@@ -43,6 +43,11 @@ output "transport_subnets_by_zone" {
   value       = { for subnet in data.aws_subnet.transport : subnet.availability_zone => subnet.id }
 }
 
+output "container_subnets_by_zone" {
+  description = "map of AZs to container subnet ids"
+  value       = { for container in data.aws_subnet.container : container.availability_zone => container.id }
+}
+
 output "cmscloud_vpn_pl" {
   description = "Prefix list of cmscloud vpn"
   value       = data.aws_ec2_managed_prefix_list.vpn_prefix_list.id
