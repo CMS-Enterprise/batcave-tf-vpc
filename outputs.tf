@@ -18,6 +18,11 @@ output "private_subnets" {
   value       = data.aws_subnets.private.ids
 }
 
+output "private_subnets_by_zone" {
+  description = "map of AZs to private subnet ids"
+  value       = { for subnet in data.aws_subnet.private : subnet.availability_zone => subnet.id }
+}
+
 output "public_subnets" {
   description = "List of IDs of public subnets"
   value       = data.aws_subnets.public.ids
