@@ -11,3 +11,8 @@ variable "transport_subnets_exist" {
   default     = false
   type        = bool
 }
+
+variable "shared_subnets_exist" {
+  default = false
+  type    = bool
+}
