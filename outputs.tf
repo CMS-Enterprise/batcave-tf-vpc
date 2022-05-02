@@ -25,27 +25,27 @@ output "private_subnets_by_zone" {
 
 output "public_subnets" {
   description = "List of IDs of public subnets"
-  value       = data.aws_subnets.public.ids
+  value       = toset(data.aws_subnets.public.ids)
 }
 
 output "container_subnets" {
   description = "List of IDs of container subnets"
-  value       = data.aws_subnets.container.ids
+  value       = toset(data.aws_subnets.container.ids)
 }
 
 output "transport_subnets" {
   description = "List of IDs of transport subnets"
-  value       = data.aws_subnets.transport.ids
+  value       = var.transport_subnets_exist ? toset(data.aws_subnets.transport[0].ids) : toset([])
 }
 
 output "transport_subnet_cidr_blocks" {
   description = "map of IDs to transport subnet cidrs"
-  value       = { for subnet in data.aws_subnet.transport : subnet.id => subnet.cidr_block }
+  value       = var.transport_subnets_exist ? { for subnet in data.aws_subnet.transport : subnet.id => subnet.cidr_block } : {}
 }
 
 output "transport_subnets_by_zone" {
   description = "map of AZs to transport subnet ids"
-  value       = { for subnet in data.aws_subnet.transport : subnet.availability_zone => subnet.id }
+  value       = var.transport_subnets_exist ? { for subnet in data.aws_subnet.transport : subnet.availability_zone => subnet.id } : {}
 }
 
 output "container_subnets_by_zone" {
@@ -64,4 +64,13 @@ output "cmscloud_shared_services_pl" {
 
 output "cmscloud_security_tools_pl" {
   value = data.aws_ec2_managed_prefix_list.cmscloud_security_tools.id
+}
+
+output "subnets" {
+  value = { for subnet_name, subnet_values in local.all_subnets : subnet_name => {
+    ids         = toset(keys(subnet_values))
+    azs_to_id   = { for subnet_id, subnet_value in subnet_values : subnet_value.availability_zone => subnet_id }
+    ids_to_cidr = { for subnet_id, subnet_value in subnet_values : subnet_id => subnet_value.cidr_block }
+    }
+  }
 }
