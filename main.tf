@@ -95,6 +95,35 @@ data "aws_ec2_managed_prefix_list" "cmscloud_security_tools" {
   name = "cmscloud-security-tools"
 }
 
+data "aws_route_table" "shared" {
+  for_each  = toset(try(data.aws_subnets.shared[0].ids, []))
+  subnet_id = each.key
+}
+
+data "aws_ec2_transit_gateway" "shared_services" {
+  filter {
+    name   = "owner-id"
+    values = ["921617238787"]
+  }
+}
+
+locals {
+  # shared subnet route table ids
+  shared_subnet_route_tables = [for rt in data.aws_route_table.shared : rt.route_table_id]
+  # Map of routes and CIDRs
+  shared_subnet_additional_routes = { for each in setproduct(local.shared_subnet_route_tables, var.shared_subnets_additional_tgw_routes)
+    : "${each[0]}_${each[1]}" =>
+    { route_table_id = each[0], cidr = each[1] }
+  }
+}
+resource "aws_route" "shared_subnet_additional_routes_to_tgw" {
+  for_each = local.shared_subnet_additional_routes
+
+  route_table_id         = each.value.route_table_id
+  destination_cidr_block = each.value.cidr
+  transit_gateway_id     = data.aws_ec2_transit_gateway.shared_services.id
+}
+
 locals {
   all_subnets = merge({
     "public"    = data.aws_subnet.public

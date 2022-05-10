@@ -13,6 +13,13 @@ variable "transport_subnets_exist" {
 }
 
 variable "shared_subnets_exist" {
-  default = false
-  type    = bool
+  description = "Shared subnets are used to house resources intended to be shared across ALL CMS Cloud systems via the transit gateway"
+  default     = false
+  type        = bool
+}
+
+variable "shared_subnets_additional_tgw_routes" {
+  description = "These CIDR blocks will be added to the shared subnet route tables and routed to the transit gateway"
+  default     = []
+  type        = list(any)
 }
