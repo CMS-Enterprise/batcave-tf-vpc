@@ -23,3 +23,9 @@ variable "shared_subnets_additional_tgw_routes" {
   default     = []
   type        = list(any)
 }
+
+variable "public_pl_exists" {
+  description = "The public PL is a work in progress (as of 2022-05-27) by the network team.  It will eventually be rolled out everywhere, but is not yet.  For now, it defaults to false, but can eventually be removed when every ADO VPC has it"
+  default     = false
+  type        = bool
+}

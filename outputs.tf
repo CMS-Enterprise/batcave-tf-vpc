@@ -66,6 +66,11 @@ output "cmscloud_security_tools_pl" {
   value = data.aws_ec2_managed_prefix_list.cmscloud_security_tools.id
 }
 
+output "cmscloud_public_pl" {
+  description = "Prefix list of cmscloud public"
+  value       = var.public_pl_exists ? data.aws_ec2_managed_prefix_list.cmscloud_public_pl[0].id : ""
+}
+
 output "subnets" {
   value = { for subnet_name, subnet_values in local.all_subnets : subnet_name => {
     ids         = toset(keys(subnet_values))

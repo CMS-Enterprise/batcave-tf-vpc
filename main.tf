@@ -95,6 +95,11 @@ data "aws_ec2_managed_prefix_list" "cmscloud_security_tools" {
   name = "cmscloud-security-tools"
 }
 
+data "aws_ec2_managed_prefix_list" "cmscloud_public_pl" {
+  count = var.public_pl_exists ? 1 : 0
+  name  = "cmscloud-public"
+}
+
 data "aws_route_table" "shared" {
   for_each  = toset(try(data.aws_subnets.shared[0].ids, []))
   subnet_id = each.key
