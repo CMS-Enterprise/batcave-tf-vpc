@@ -71,6 +71,11 @@ output "cmscloud_public_pl" {
   value       = var.public_pl_exists ? data.aws_ec2_managed_prefix_list.cmscloud_public_pl[0].id : ""
 }
 
+output "batcave_gateway_ips" {
+  description = "A list of public IPs used by BatCAVE NAT Gateways."
+  value       = [ for gateway in data.aws_nat_gateway.public : gateway.public_ip ]
+}
+
 output "subnets" {
   value = { for subnet_name, subnet_values in local.all_subnets : subnet_name => {
     ids         = toset(keys(subnet_values))

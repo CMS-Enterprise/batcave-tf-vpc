@@ -29,3 +29,15 @@ variable "public_pl_exists" {
   default     = false
   type        = bool
 }
+
+variable "create_nat_gateway_pl" {
+  description = "When set to true, create a prefix list for public IP addresses associated with the public NAT gateway for this VPC"
+  type        = bool
+  default     = false
+}
+
+variable "share_nat_gateway_pl_with_accounts" {
+  description = "A list of account ids to share the public NAT Gateway Prefix List with"
+  type        = list(number)
+  default     = []
+}
