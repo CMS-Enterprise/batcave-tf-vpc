@@ -71,6 +71,11 @@ output "cmscloud_public_pl" {
   value       = var.public_pl_exists ? data.aws_ec2_managed_prefix_list.cmscloud_public_pl[0].id : ""
 }
 
+output "zscaler_pl" {
+  description = "Prefix list of zscaler"
+  value       = var.zscaler_pl_exists ? data.aws_ec2_managed_prefix_list.zscaler_pl[0].id : ""
+}
+
 output "subnets" {
   value = { for subnet_name, subnet_values in local.all_subnets : subnet_name => {
     ids         = toset(keys(subnet_values))
@@ -91,12 +96,9 @@ output "cms_public_ip_cidrs" {
     "34.196.35.156/32",
 
     #zscaler ips
-    "185.46.212.0/22",
-    "104.129.192.0/20",
-    "165.225.0.0/17",
-    "165.225.192.0/18",
-    "147.161.128.0/17",
     "136.226.0.0/16",
-    "137.83.128.0/18",
+    "165.225.0.0/17",
+    "208.250.57.0/24", #zscaler equinix west
+    "65.213.206.0/24", #zscaler equinix east
   ]
 }

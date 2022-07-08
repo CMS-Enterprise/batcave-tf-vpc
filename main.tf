@@ -100,6 +100,11 @@ data "aws_ec2_managed_prefix_list" "cmscloud_public_pl" {
   name  = "cmscloud-public"
 }
 
+data "aws_ec2_managed_prefix_list" "zscaler_pl" {
+  count = var.zscaler_pl_exists ? 1 : 0
+  name  = "zscaler"
+}
+
 data "aws_route_table" "shared" {
   for_each  = toset(try(data.aws_subnets.shared[0].ids, []))
   subnet_id = each.key

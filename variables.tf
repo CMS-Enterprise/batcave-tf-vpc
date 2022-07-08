@@ -29,3 +29,9 @@ variable "public_pl_exists" {
   default     = false
   type        = bool
 }
+
+variable "zscaler_pl_exists" {
+  description = "The zscaler PL is a work in progress (as of 2022-07-08) by the network team.  It will eventually be rolled out everywhere, but is not yet.  For now, it defaults to false, but can eventually be removed when every ADO VPC has it"
+  default     = false
+  type        = bool
+}
