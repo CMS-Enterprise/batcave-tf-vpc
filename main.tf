@@ -100,7 +100,7 @@ data "aws_ec2_managed_prefix_list" "cmscloud_public_pl" {
   name  = "cmscloud-public"
 }
 
-data "aws_ec2_managed_prefix_list" "cmscloud_zscaler_pl" {
+data "aws_ec2_managed_prefix_list" "zscaler_pl" {
   count = var.zscaler_pl_exists ? 1 : 0
   name  = "zscaler"
 }

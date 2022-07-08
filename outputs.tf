@@ -71,6 +71,11 @@ output "cmscloud_public_pl" {
   value       = var.public_pl_exists ? data.aws_ec2_managed_prefix_list.cmscloud_public_pl[0].id : ""
 }
 
+output "zscaler_pl" {
+  description = "Prefix list of zscaler"
+  value       = var.zscaler_pl_exists ? data.aws_ec2_managed_prefix_list.zscaler_pl[0].id : ""
+}
+
 output "subnets" {
   value = { for subnet_name, subnet_values in local.all_subnets : subnet_name => {
     ids         = toset(keys(subnet_values))
