@@ -102,3 +102,7 @@ output "cms_public_ip_cidrs" {
     "65.213.206.0/24", #zscaler equinix east
   ]
 }
+
+output "nat_gateway_public_ip_cidrs" {
+  value = try(formatlist("%s/32", data.aws_eips.nat_gateways.public_ips), [])
+}
