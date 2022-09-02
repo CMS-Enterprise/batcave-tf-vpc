@@ -144,3 +144,9 @@ locals {
     var.transport_subnets_exist ? { "transport" = data.aws_subnet.transport } : {},
   )
 }
+
+data "aws_eips" "nat_gateways" {
+  tags = {
+    Name = "${var.project}-*-${var.env}-nat-gateway-*"
+  }
+}
