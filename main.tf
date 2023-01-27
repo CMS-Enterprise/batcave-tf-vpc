@@ -110,12 +110,6 @@ data "aws_route_table" "shared" {
   subnet_id = each.key
 }
 
-data "aws_ec2_transit_gateway" "shared_services" {
-  filter {
-    name   = "owner-id"
-    values = ["921617238787"]
-  }
-}
 
 locals {
   # shared subnet route table ids
@@ -126,13 +120,22 @@ locals {
     { route_table_id = each[0], cidr = each[1] }
   }
 }
-resource "aws_route" "shared_subnet_additional_routes_to_tgw" {
-  for_each = local.shared_subnet_additional_routes
 
-  route_table_id         = each.value.route_table_id
-  destination_cidr_block = each.value.cidr
-  transit_gateway_id     = data.aws_ec2_transit_gateway.shared_services.id
-}
+## Commenting out while we determine if these routes are necessary at all.  2023-01-26
+#data "aws_ec2_transit_gateway" "shared_services" {
+#  count = var.shared_subnets_exist && length(keys(local.shared_subnet_additional_routes)) > 0 ? 1 : 0
+#  filter {
+#    name   = "owner-id"
+#    values = ["921617238787"]
+#  }
+#}
+#resource "aws_route" "shared_subnet_additional_routes_to_tgw" {
+#  for_each = local.shared_subnet_additional_routes
+#
+#  route_table_id         = each.value.route_table_id
+#  destination_cidr_block = each.value.cidr
+#  transit_gateway_id     = try(data.aws_ec2_transit_gateway.shared_services[0].id, null)
+#}
 
 locals {
   all_subnets = merge({
