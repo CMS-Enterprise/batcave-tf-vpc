@@ -18,6 +18,12 @@ variable "shared_subnets_exist" {
   type        = bool
 }
 
+variable "data_subnets_exist" {
+  description = "Data subnets are used to house resources intended to access services inside CMS's data plane"
+  default     = false
+  type        = bool
+}
+
 variable "shared_subnets_additional_tgw_routes" {
   description = "These CIDR blocks will be added to the shared subnet route tables and routed to the transit gateway"
   default     = []
