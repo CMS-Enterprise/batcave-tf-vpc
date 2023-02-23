@@ -57,6 +57,17 @@ data "aws_subnets" "shared" {
   }
 }
 
+# data subnets
+data "aws_subnets" "data" {
+  count = var.data_subnets_exist ? 1 : 0
+  filter {
+    name = "tag:Name"
+    values = [
+      "${var.project}-*-${var.env}-data-*"
+    ]
+  }
+}
+
 ## subnet resources
 data "aws_subnet" "private" {
   for_each = toset(data.aws_subnets.private.ids)
@@ -80,6 +91,11 @@ data "aws_subnet" "transport" {
 
 data "aws_subnet" "shared" {
   for_each = var.shared_subnets_exist ? toset(data.aws_subnets.shared[0].ids) : toset([])
+  id       = each.value
+}
+
+data "aws_subnet" "data" {
+  for_each = var.data_subnets_exist ? toset(data.aws_subnets.data[0].ids) : toset([])
   id       = each.value
 }
 
@@ -144,6 +160,7 @@ locals {
     "container" = data.aws_subnet.container
     },
     var.shared_subnets_exist ? { "shared" = data.aws_subnet.shared } : {},
+    var.data_subnets_exist ? { "data" = data.aws_subnet.data } : {},
     var.transport_subnets_exist ? { "transport" = data.aws_subnet.transport } : {},
   )
 }
