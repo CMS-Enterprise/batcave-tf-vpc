@@ -1,7 +1,7 @@
 # vpc id
 data "aws_vpc" "batcave_vpc" {
   tags = {
-    Name = "${var.project}-*-${var.env}"
+    Name = coalesce(var.vpc_lookup_override, "${var.project}-*-${var.env}")
   }
 }
 
@@ -10,7 +10,7 @@ data "aws_subnets" "private" {
   filter {
     name = "tag:Name"
     values = [
-      "${var.project}-*-${var.env}-private-*"
+      try(var.subnet_lookup_overrides.private, "${var.project}-*-${var.env}-private-*")
     ]
   }
 }
@@ -20,7 +20,7 @@ data "aws_subnets" "public" {
   filter {
     name = "tag:Name"
     values = [
-      "${var.project}-*-${var.env}-public-*"
+      try(var.subnet_lookup_overrides.public, "${var.project}-*-${var.env}-public-*")
     ]
   }
 }
@@ -30,7 +30,7 @@ data "aws_subnets" "container" {
   filter {
     name = "tag:Name"
     values = [
-      "${var.project}-*-${var.env}-unroutable-*"
+      try(var.subnet_lookup_overrides.container, "${var.project}-*-${var.env}-unroutable-*")
     ]
   }
 }
@@ -41,7 +41,7 @@ data "aws_subnets" "transport" {
   filter {
     name = "tag:Name"
     values = [
-      "${var.project}-*-${var.env}-transport-*"
+      try(var.subnet_lookup_overrides.transport, "${var.project}-*-${var.env}-transport-*")
     ]
   }
 }
@@ -52,7 +52,7 @@ data "aws_subnets" "shared" {
   filter {
     name = "tag:Name"
     values = [
-      "${var.project}-*-${var.env}-shared-*"
+      try(var.subnet_lookup_overrides.shared, "${var.project}-*-${var.env}-shared-*")
     ]
   }
 }
@@ -63,7 +63,7 @@ data "aws_subnets" "data" {
   filter {
     name = "tag:Name"
     values = [
-      "${var.project}-*-${var.env}-data-*"
+      try(var.subnet_lookup_overrides.data, "${var.project}-*-${var.env}-data-*")
     ]
   }
 }
