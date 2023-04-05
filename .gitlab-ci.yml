@@ -1,11 +1,27 @@
-# Forceing repo update in Gitlab
+# Attempting to trigger pipeline
 iac-scan-pr:
     stage: test
     image: snyk/snyk:alpine
     before_script: 
         - snyk auth $SNYK_TOKEN
     script:
-        - snyk iac test --report
+        # Other possible flags can be found https://docs.snyk.io/snyk-cli/commands/iac-test
+        # --severity-threshold=<low|medium|high|critical>
+        # --scan=<TERRAFORM_PLAN_SCAN_MODE>
+        - apk add --no-cache curl jq github-cli
+        - snyk iac test --report --json-file-output=report.json || true
+        # Get all pulls for the repo in Github
+        - |
+          PULL_REQUESTS=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/CMS-Enterprise/$CI_PROJECT_NAME/pulls)
+        # Parse through for most recent pull request matching source branch SHA
+        - |
+          ISSUE_NUMBER=$(echo $PULL_REQUESTS| jq ".[] | select(.head.sha == \"$CI_EXTERNAL_PULL_REQUEST_SOURCE_BRANCH_SHA\") | .number")
+        - gh issue comment $ISSUE_NUMBER --repo CMS-Enterprise/$CI_PROJECT_NAME --body-file report.txt         
+    artifacts:
+      paths:
+        - report.json        
+    allow_failure: 
+      exit_codes: 1
     only:
         - external_pull_requests
 
@@ -15,6 +31,21 @@ iac-scan:
     before_script: 
         - snyk auth $SNYK_TOKEN
     script:
-        - snyk iac test --report
-
-
+        # Other possible flags can be found https://docs.snyk.io/snyk-cli/commands/iac-test
+        # --severity-threshold=<low|medium|high|critical>
+        # --scan=<TERRAFORM_PLAN_SCAN_MODE>
+        - apk add --no-cache curl jq github-cli
+        - ( snyk iac test --report --json-file-output=report.json | tee report.txt ) || true
+        # Get all pulls for the repo in Github
+        - |
+          PULL_REQUESTS=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/CMS-Enterprise/$CI_PROJECT_NAME/pulls)
+        # Parse through for most recent pull request matching source branch SHA
+        - |
+          ISSUE_NUMBER=$(echo $PULL_REQUESTS| jq ".[] | select(.head.sha == \"$CI_COMMIT_SHA\") | .number)
+        - gh issue comment $ISSUE_NUMBER --repo CMS-Enterprise/$CI_PROJECT_NAME --body-file report.txt
+    artifacts:
+      paths:
+        - report.json        
+    allow_failure: 
+      exit_codes: 1
+    when: manual
