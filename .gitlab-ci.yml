@@ -1,4 +1,4 @@
-# Attempting to trigger pipeline
+# Changing to change commit ID for testing
 iac-scan-pr:
     stage: test
     image: snyk/snyk:alpine
