@@ -1,10 +1,3 @@
-# vpc id
-data "aws_vpc" "batcave_vpc" {
-  tags = {
-    Name = coalesce(var.vpc_lookup_override, "${var.project}-*-${var.env}")
-  }
-}
-
 # private subnets
 data "aws_subnets" "private" {
   filter {
@@ -163,6 +156,38 @@ locals {
     var.data_subnets_exist ? { "data" = data.aws_subnet.data } : {},
     var.transport_subnets_exist ? { "transport" = data.aws_subnet.transport } : {},
   )
+}
+
+# vpc id
+data "aws_vpc" "batcave_vpc" {
+  tags = {
+    Name = coalesce(var.vpc_lookup_override, "${var.project}-*-${var.env}")
+  }
+}
+
+resource "aws_route_table" "s3_endpoint_route_table" {
+  vpc_id          = data.aws_vpc.batcave_vpc.id
+
+  tags = {
+    Name = "batcaved-dev-s3-route-table"
+  }
+}
+
+resource "aws_route" "s3_endpoint" {
+  for_each                  = toset(data.aws_vpc.batcave_vpc.cidr_block_associations.*.cidr_block)
+  route_table_id            = aws_route_table.s3_endpoint_route_table.id
+  destination_cidr_block    = each.key
+  nat_gateway_id            = "nat-0dc7d0fafd6d5336b"
+}
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id          = "${data.aws_vpc.batcave_vpc.id}"
+  service_name    = "com.amazonaws.${local.common.aws_region}.s3"
+  route_table_ids = [aws_route_table.s3_endpoint_route_table.id]
+
+  tags = {
+    Name = "batcave-dev-s3-endpoint"
+  }
 }
 
 data "aws_eips" "nat_gateways" {
