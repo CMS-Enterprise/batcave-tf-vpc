@@ -186,7 +186,7 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids = [aws_route_table.s3_endpoint_route_table.id]
 
   tags = {
-    Name = "batcave-dev-s3-endpoint"
+    Name = "${var.cluster_name}-s3-endpoint"
   }
 }
 
