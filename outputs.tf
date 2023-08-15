@@ -3,10 +3,6 @@ output "vpc_cidr_blocks" {
   value = data.aws_vpc.batcave_vpc.cidr_block_associations.*.cidr_block
 }
 
-output "vpc_endpoint_cidr" {
-  value = aws_vpc_endpoint.s3.cidr_blocks
-}
-
 output "vpc_id" {
   description = "The ID of the VPC"
   value       = data.aws_vpc.batcave_vpc.id

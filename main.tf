@@ -183,6 +183,8 @@ locals {
 }
 
 resource "aws_vpc_endpoint" "s3" {
+  count = var.create_s3_vpc_endpoint ? 1 : 0
+
   vpc_id          = data.aws_vpc.batcave_vpc.id
   service_name    = "com.amazonaws.${var.aws_region}.s3"
   route_table_ids = [for route_table in data.aws_route_table.all_non_public_route_tables : route_table.id]

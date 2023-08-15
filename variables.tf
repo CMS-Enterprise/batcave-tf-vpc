@@ -57,3 +57,9 @@ variable "subnet_lookup_overrides" {
   default     = {}
   type        = map(string)
 }
+
+variable "create_s3_vpc_endpoint" {
+  type        = bool
+  description = "toggle on/off the creation of s3 vpc endpoint"
+  default     = true
+}
