@@ -6,6 +6,10 @@ variable "project" {
   default = "batcave"
 }
 
+variable "aws_region" {
+  default = "us-east-1"
+}
+
 variable "transport_subnets_exist" {
   description = "Transport subnets are used to house the NLB in situations where a service is required to be exposed to VDI users"
   default     = false

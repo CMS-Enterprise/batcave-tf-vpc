@@ -119,10 +119,16 @@ data "aws_ec2_managed_prefix_list" "cmscloud_public_pl" {
 data "aws_ec2_managed_prefix_list" "zscaler_pl" {
   count = var.zscaler_pl_exists ? 1 : 0
   name  = "zscaler"
+
 }
 
 data "aws_route_table" "shared" {
   for_each  = toset(try(data.aws_subnets.shared[0].ids, []))
+  subnet_id = each.key
+}
+
+data "aws_route_table" "all_non_public_route_tables" {
+  for_each  = toset(local.all_non_public_subnet_ids)
   subnet_id = each.key
 }
 
@@ -163,30 +169,26 @@ locals {
     var.data_subnets_exist ? { "data" = data.aws_subnet.data } : {},
     var.transport_subnets_exist ? { "transport" = data.aws_subnet.transport } : {},
   )
-}
 
-resource "aws_route_table" "s3_endpoint_route_table" {
-  vpc_id          = data.aws_vpc.batcave_vpc.id
+  all_non_public_subnets = merge({
+    "private"   = data.aws_subnet.private
+    "container" = data.aws_subnet.container
+    },
+    var.shared_subnets_exist ? { "shared" = data.aws_subnet.shared } : {},
+    var.data_subnets_exist ? { "data" = data.aws_subnet.data } : {},
+    var.transport_subnets_exist ? { "transport" = data.aws_subnet.transport } : {},
+  )
 
-  tags = {
-    Name = "batcaved-dev-s3-route-table"
-  }
-}
-
-resource "aws_route" "s3_endpoint" {
-  for_each                  = toset(data.aws_vpc.batcave_vpc.cidr_block_associations.*.cidr_block)
-  route_table_id            = aws_route_table.s3_endpoint_route_table.id
-  destination_cidr_block    = each.key
-  nat_gateway_id            = "nat-0dc7d0fafd6d5336b"
+  all_non_public_subnet_ids = flatten([for subnet_group in local.all_non_public_subnets : [for subnet in subnet_group : subnet.id]])
 }
 
 resource "aws_vpc_endpoint" "s3" {
-  vpc_id          = "${data.aws_vpc.batcave_vpc.id}"
-  service_name    = "com.amazonaws.${local.common.aws_region}.s3"
-  route_table_ids = [aws_route_table.s3_endpoint_route_table.id]
+  vpc_id          = data.aws_vpc.batcave_vpc.id
+  service_name    = "com.amazonaws.${var.aws_region}.s3"
+  route_table_ids = [for route_table in data.aws_route_table.all_non_public_route_tables : route_table.id]
 
   tags = {
-    Name = "${var.cluster_name}-s3-endpoint"
+    Name = "${var.project}-${var.env}-s3-endpoint"
   }
 }
 
