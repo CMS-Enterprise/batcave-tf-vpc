@@ -1,3 +1,10 @@
+# vpc id
+data "aws_vpc" "batcave_vpc" {
+  tags = {
+    Name = coalesce(var.vpc_lookup_override, "${var.project}-*-${var.env}")
+  }
+}
+
 # private subnets
 data "aws_subnets" "private" {
   filter {
@@ -156,13 +163,6 @@ locals {
     var.data_subnets_exist ? { "data" = data.aws_subnet.data } : {},
     var.transport_subnets_exist ? { "transport" = data.aws_subnet.transport } : {},
   )
-}
-
-# vpc id
-data "aws_vpc" "batcave_vpc" {
-  tags = {
-    Name = coalesce(var.vpc_lookup_override, "${var.project}-*-${var.env}")
-  }
 }
 
 resource "aws_route_table" "s3_endpoint_route_table" {
