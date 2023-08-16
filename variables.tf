@@ -6,6 +6,10 @@ variable "project" {
   default = "batcave"
 }
 
+variable "aws_region" {
+  default = "us-east-1"
+}
+
 variable "transport_subnets_exist" {
   description = "Transport subnets are used to house the NLB in situations where a service is required to be exposed to VDI users"
   default     = false
@@ -52,4 +56,10 @@ variable "subnet_lookup_overrides" {
   description = "Some Subnets don't follow standard naming conventions.  Use this map to override the query used for looking up Subnets.  Ex: { private = \"foo-west-nonpublic-*\" }"
   default     = {}
   type        = map(string)
+}
+
+variable "create_s3_vpc_endpoint" {
+  type        = bool
+  description = "toggle on/off the creation of s3 vpc endpoint"
+  default     = true
 }

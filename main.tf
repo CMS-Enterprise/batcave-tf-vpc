@@ -119,10 +119,16 @@ data "aws_ec2_managed_prefix_list" "cmscloud_public_pl" {
 data "aws_ec2_managed_prefix_list" "zscaler_pl" {
   count = var.zscaler_pl_exists ? 1 : 0
   name  = "zscaler"
+
 }
 
 data "aws_route_table" "shared" {
   for_each  = toset(try(data.aws_subnets.shared[0].ids, []))
+  subnet_id = each.key
+}
+
+data "aws_route_table" "all_non_public_route_tables" {
+  for_each  = toset(local.all_non_public_subnet_ids)
   subnet_id = each.key
 }
 
@@ -163,6 +169,29 @@ locals {
     var.data_subnets_exist ? { "data" = data.aws_subnet.data } : {},
     var.transport_subnets_exist ? { "transport" = data.aws_subnet.transport } : {},
   )
+
+  all_non_public_subnets = merge({
+    "private"   = data.aws_subnet.private
+    "container" = data.aws_subnet.container
+    },
+    var.shared_subnets_exist ? { "shared" = data.aws_subnet.shared } : {},
+    var.data_subnets_exist ? { "data" = data.aws_subnet.data } : {},
+    var.transport_subnets_exist ? { "transport" = data.aws_subnet.transport } : {},
+  )
+
+  all_non_public_subnet_ids = flatten([for subnet_group in local.all_non_public_subnets : [for subnet in subnet_group : subnet.id]])
+}
+
+resource "aws_vpc_endpoint" "s3" {
+  count = var.create_s3_vpc_endpoint ? 1 : 0
+
+  vpc_id          = data.aws_vpc.batcave_vpc.id
+  service_name    = "com.amazonaws.${var.aws_region}.s3"
+  route_table_ids = [for route_table in data.aws_route_table.all_non_public_route_tables : route_table.id]
+
+  tags = {
+    Name = "${var.project}-${var.env}-s3-endpoint"
+  }
 }
 
 data "aws_eips" "nat_gateways" {
