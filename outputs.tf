@@ -100,6 +100,8 @@ output "cms_public_ip_cidrs" {
     "165.225.0.0/17",
     "208.250.57.0/24", #zscaler equinix west
     "65.213.206.0/24", #zscaler equinix east
+    "52.73.139.64/32", #zscaler (by testing)
+    "52.70.76.139/32", #zscaler (by testing)
   ]
 }
 
