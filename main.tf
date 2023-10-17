@@ -190,12 +190,12 @@ resource "aws_vpc_endpoint" "s3" {
   route_table_ids = [for route_table in data.aws_route_table.all_non_public_route_tables : route_table.id]
 
   tags = {
-    Name = "${var.project}-${var.env}-s3-endpoint"
+    Name = coalesce(var.vpc_endpoint_lookup_overrides, "${var.project}-${var.env}-s3-endpoint")
   }
 }
 
 data "aws_eips" "nat_gateways" {
   tags = {
-    Name = "${var.project}-*-${var.env}-nat-gateway-*"
+    Name = coalesce(var.nat_gateways_lookup_overrides, "${var.project}-*-${var.env}-nat-gateway-*")
   }
 }

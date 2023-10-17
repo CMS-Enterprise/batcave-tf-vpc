@@ -63,3 +63,15 @@ variable "create_s3_vpc_endpoint" {
   description = "toggle on/off the creation of s3 vpc endpoint"
   default     = true
 }
+
+variable "vpc_endpoint_lookup_overrides" {
+  description = "Some vpc endpoints don't follow standard naming conventions.  Use this map to override the query used for looking up Subnets.  Ex: { private = \"foo-west-nonpublic-*\" }"
+  default     = {}
+  type        = map(string)
+}
+
+variable "nat_gateways_lookup_overrides" {
+  description = "Some nat gateways don't follow standard naming conventions.  Use this map to override the query used for looking up Subnets.  Ex: { private = \"foo-west-nonpublic-*\" }"
+  default     = {}
+  type        = map(string)
+}
