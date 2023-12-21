@@ -1,13 +1,16 @@
 variable "env" {
   default = "dev"
+  type   = string
 }
 
 variable "project" {
   default = "batcave"
+  type  = string
 }
 
 variable "aws_region" {
   default = "us-east-1"
+  type    = string
 }
 
 variable "transport_subnets_exist" {

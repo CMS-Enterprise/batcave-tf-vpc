@@ -1,3 +1,13 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.61.0"
+    }
+  }
+  required_version = ">= 1.2"
+}
+
 # vpc id
 data "aws_vpc" "batcave_vpc" {
   tags = {
