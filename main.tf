@@ -132,11 +132,6 @@ data "aws_ec2_managed_prefix_list" "zscaler_pl" {
 
 }
 
-data "aws_route_table" "shared" {
-  for_each  = toset(try(data.aws_subnets.shared[0].ids, []))
-  subnet_id = each.key
-}
-
 data "aws_route_table" "all_non_public_route_tables" {
   for_each  = toset(local.all_non_public_subnet_ids)
   subnet_id = each.key
@@ -144,13 +139,6 @@ data "aws_route_table" "all_non_public_route_tables" {
 
 
 locals {
-  # shared subnet route table ids
-  shared_subnet_route_tables = [for rt in data.aws_route_table.shared : rt.route_table_id]
-  # Map of routes and CIDRs
-  shared_subnet_additional_routes = { for each in setproduct(local.shared_subnet_route_tables, var.shared_subnets_additional_tgw_routes)
-    : "${each[0]}_${each[1]}" =>
-    { route_table_id = each[0], cidr = each[1] }
-  }
 }
 
 ## Commenting out while we determine if these routes are necessary at all.  2023-01-26
