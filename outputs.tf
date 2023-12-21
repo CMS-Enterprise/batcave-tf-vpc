@@ -1,6 +1,6 @@
 ## VPC Data
 output "vpc_cidr_blocks" {
-  value = data.aws_vpc.batcave_vpc.cidr_block_associations.*.cidr_block
+  value = data.aws_vpc.batcave_vpc.cidr_block_associations[*].cidr_block
 }
 
 output "vpc_id" {

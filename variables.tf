@@ -1,13 +1,16 @@
 variable "env" {
   default = "dev"
+  type    = string
 }
 
 variable "project" {
   default = "batcave"
+  type    = string
 }
 
 variable "aws_region" {
   default = "us-east-1"
+  type    = string
 }
 
 variable "transport_subnets_exist" {
@@ -26,12 +29,6 @@ variable "data_subnets_exist" {
   description = "Data subnets are used to house resources intended to access services inside CMS's data plane"
   default     = false
   type        = bool
-}
-
-variable "shared_subnets_additional_tgw_routes" {
-  description = "These CIDR blocks will be added to the shared subnet route tables and routed to the transit gateway"
-  default     = []
-  type        = list(any)
 }
 
 variable "public_pl_exists" {
